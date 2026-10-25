@@ -75,9 +75,8 @@ public class TestContextAws implements TestContext {
         } catch (Exception e) {
             System.out.println("❗ Error during CloudWatch cleanup: " + e.getMessage());
         }
-        finally{
-            logsClient.close();
-        }
+        // Do not close the shared logsClient field here: the runner also calls this
+        // method as a pre-deploy cleanup, and fetchLogs() still needs the client.
 
         // Then destroy infrastructure
         try {
