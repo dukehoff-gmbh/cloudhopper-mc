@@ -66,11 +66,6 @@
             <version>2.1.1</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>eu.cloudhopper.mc</groupId>
-            <artifactId>test-domain</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>../test-functions/src/main/java</sourceDirectory>
