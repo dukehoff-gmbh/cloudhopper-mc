@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_event_rule" "${handlerInfo.functionId}_schedule" {
-  name                = "${handlerInfo.functionId}-schedule"
+  name                = "${"$"}{var.cloudhopper_name_prefix}${handlerInfo.functionId}-schedule"
 <#assign parts = scheduleExpression?split(" ")>
 <#if parts?size == 5>
   <#-- convert 5-part UNIX cron to 6-part AWS cron: replace weekday with ? and add * for year -->

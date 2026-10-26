@@ -164,6 +164,9 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ vars.AWS_REGION }}
+        # Unique per run and attempt, so leftovers of an aborted run never collide
+        # with the names of the next one (bucket names allow at most 63 chars).
+        TF_VAR_cloudhopper_name_prefix: ci-${{ github.run_id }}-${{ github.run_attempt }}-
       with:
         image: cloudhopper-tck-aws:latest
         options: |
@@ -173,6 +176,7 @@ jobs:
           -e AWS_ACCESS_KEY_ID
           -e AWS_SECRET_ACCESS_KEY
           -e AWS_REGION
+          -e TF_VAR_cloudhopper_name_prefix
         run: |
           echo '🔍 Recompiling only system tests...'
           mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-aws-terraform &&
