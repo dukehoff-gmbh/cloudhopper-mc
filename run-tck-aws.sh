@@ -25,6 +25,7 @@ docker run --rm \
   -e AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY \
   -e AWS_REGION \
+  -e TF_VAR_cloudhopper_name_prefix \
   cloudhopper-tck-aws bash -c "
     echo '🔍 Recompiling only system tests...'
     mvn -f /workspace/pom.xml install -DskipTests -pl test/system-tests/generator-aws-terraform &&

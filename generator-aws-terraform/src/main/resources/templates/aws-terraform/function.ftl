@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "${handlerInfo.functionId}" {
   #filename      = "${handlerInfo.targetDir}/${handlerInfo.artifactId}-${handlerInfo.version}-${handlerInfo.classifier}.jar"
-  function_name = "${handlerInfo.functionId}"
+  function_name = "${"$"}{var.cloudhopper_name_prefix}${handlerInfo.functionId}"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "${handlerWrapperFullyQualifiedName}$Auto::handleRequest"
   
@@ -23,7 +23,7 @@ resource "aws_lambda_function" "${handlerInfo.functionId}" {
   }
 }
 
-# The CloudWatch log group "/aws/lambda/${handlerInfo.functionId}" is intentionally
+# The CloudWatch log group "/aws/lambda/<function_name>" is intentionally
 # NOT managed by Terraform. AWS Lambda creates it automatically on first invocation
 # (the execution role has the AWSLambdaBasicExecutionRole logs permissions). Managing
 # it here caused "already exists" conflicts, because Lambda re-creates the group

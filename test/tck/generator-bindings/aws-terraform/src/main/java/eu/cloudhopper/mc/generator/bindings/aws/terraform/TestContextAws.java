@@ -50,6 +50,9 @@ public class TestContextAws implements TestContext {
     private final CloudWatchLogsClient logsClient = CloudWatchLogsClient.create();
     private final Path terraformDir = Path.of(System.getProperty("user.dir"), "target", "deployment", "aws-terraform");
     private final Set<String> usedFunctions = new HashSet<>();
+    // Same value Terraform reads as var.cloudhopper_name_prefix, so the TCK
+    // resolves the prefixed Lambda names that were actually deployed.
+    private final String namePrefix = System.getenv().getOrDefault("TF_VAR_cloudhopper_name_prefix", "");
 
     @Override
     public void deployTestFunctions() {
@@ -114,7 +117,7 @@ public class TestContextAws implements TestContext {
                     : "{}";
 
             InvokeRequest request = InvokeRequest.builder()
-                    .functionName(sanitizedFunctionName)
+                    .functionName(namePrefix + sanitizedFunctionName)
                     .payload(SdkBytes.fromUtf8String(payload))
                     .build();
 
@@ -144,7 +147,7 @@ public class TestContextAws implements TestContext {
 
             return mapper.treeToValue(json, Object.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to invoke Lambda function: " + sanitizedFunctionName, e);
+            throw new RuntimeException("Failed to invoke Lambda function: " + namePrefix + sanitizedFunctionName, e);
         }
     }
 
@@ -153,7 +156,7 @@ public class TestContextAws implements TestContext {
         String sanitizedFunctionName = functionName.toLowerCase();
         usedFunctions.add(sanitizedFunctionName);
         try {
-            String logGroupName = "/aws/lambda/" + functionName;
+            String logGroupName = "/aws/lambda/" + namePrefix + functionName;
 
             DescribeLogStreamsResponse streamsResponse = logsClient.describeLogStreams(DescribeLogStreamsRequest.builder()
                     .logGroupName(logGroupName)
@@ -189,7 +192,7 @@ public class TestContextAws implements TestContext {
     }
 
     private void cleanupLogGroup(CloudWatchLogsClient logsClient, String functionName) {
-        String logGroupName = "/aws/lambda/" + functionName.toLowerCase();
+        String logGroupName = "/aws/lambda/" + namePrefix + functionName.toLowerCase();
         try {
             DeleteLogGroupRequest deleteRequest = DeleteLogGroupRequest.builder()
                     .logGroupName(logGroupName)
