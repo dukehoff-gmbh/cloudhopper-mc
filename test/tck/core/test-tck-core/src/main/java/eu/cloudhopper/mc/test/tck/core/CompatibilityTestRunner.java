@@ -176,6 +176,8 @@ public class CompatibilityTestRunner {
             System.out.println("\n\uD83C\uDF89 Certification PASSED — generator is compatible with all claimed features!");
         } else {
             System.out.println("\n❗ Certification FAILED — see above for failed tests.");
+            // Fail the launcher (and with it the CI step) instead of only printing.
+            throw new IllegalStateException(failed + " compatibility test(s) failed");
         }
     }
 

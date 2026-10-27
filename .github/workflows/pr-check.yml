@@ -56,6 +56,11 @@ jobs:
   build-and-validate:
     name: Build and Validate
     runs-on: ubuntu-latest
+    # The TCK steps deploy into shared cloud accounts, partly with fixed resource
+    # names. Run at most one of them at a time; a newer run waits instead.
+    concurrency:
+      group: cloud-tck
+      cancel-in-progress: false
 
     steps:
     - name: Check out code
